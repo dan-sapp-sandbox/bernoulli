@@ -1,0 +1,1 @@
+web: gunicorn bernoulli.wsgi:application --log-file -
