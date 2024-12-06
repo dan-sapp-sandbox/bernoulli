@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5)uol+kr$6l=i0ysd5jb!0t-ib1$ds(q1p$3x3b190pr500%42'
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://bernoulli-app-31816726101f.herokuapp.com/', 'localhost']
+ALLOWED_HOSTS = ['bernoulli-app-31816726101f.herokuapp.com', 'localhost']
 
 
 INSTALLED_APPS = [
