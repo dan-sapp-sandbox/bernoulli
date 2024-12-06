@@ -1,0 +1,84 @@
+body {
+  background: rgb(218, 142, 142);
+}
+
+.container {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: .5rem;
+}
+
+.player-wrapper {
+  background: rgb(52, 14, 113);
+  border: 1px solid black;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+.player-wrapper p {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.tracks-container {
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  padding: 5px;
+  margin-top: 50px;
+}
+
+.track {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  padding: 5px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  background: lightblue;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+.track label {
+  display: inline-block;
+  font-size: 1.3rem;
+  color: white;
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input[type="checkbox"]:checked+label {
+  transform: scale(1.05);
+}
+
+label {
+  background-color: rgb(230, 113, 236, 0.3);
+}
+
+label:hover {
+  background-color: rgb(230, 113, 236, 0.5);
+}
+
+input[type="checkbox"]:checked+label {
+  background-color: rgb(230, 113, 236, 0.8);
+}
+
+input[type="checkbox"]:checked+label:hover {
+  background-color: rgb(230, 113, 236, 0.65);
+}
+
+.update-audio-submit {
+  background: red;
+  border-radius: .5rem;
+  font-size: 1.2rem;
+  width: fit-content;
+}

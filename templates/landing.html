@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bernoulli</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+</head>
+
+<body>
+  <main class="home-main">
+    <h1>Available Audio Files</h1>
+
+    <div class="container">
+      {% for audio_file in audio_files %}
+      <div class="player-wrapper">
+        <p>{{ audio_file }}</p>
+
+        <audio controls loop>
+          <source src="media/{{ MEDIA_URL }}{{ audio_file }}" type="audio/wav">
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      {% endfor %}
+    </div>
+    <form method="post" class="tracks-container" action="{% url 'update_audio' %}">
+      {% csrf_token %}
+      <div class="track">
+        <input type="checkbox" name="track-1" value="1">
+        <label for="1">1</label>
+        
+        <input type="checkbox" name="track-1" value="2">
+        <label for="2">2</label>
+
+        <input type="checkbox" name="track-1" value="3">
+        <label for="3">3</label>
+
+        <input type="checkbox" name="track-1" value="4">
+        <label for="4">4</label>
+      </div>
+      <button class="update-audio-submit" type="submit">Submit</button>
+    </form>
+  </main>
+</body>
+
+</html>
