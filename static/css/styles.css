@@ -1,12 +1,16 @@
 body {
   background: rgb(218, 142, 142);
+  min-width: 360px;
+}
+
+main {
+  width: 100%;
 }
 
 .container {
   display: grid;
   justify-items: center;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-gap: .5rem;
 }
 
@@ -16,6 +20,7 @@ body {
   border-radius: 1rem;
   padding: .5rem;
 }
+
 .player-wrapper p {
   color: white;
   font-size: 1.5rem;
@@ -26,20 +31,30 @@ body {
   font-size: 1.5rem;
 }
 
+.bpm {
+  font-size: 1.6rem;
+  width: fit-content;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
 .tracks-container {
+  margin: 30px 0;
+}
+
+.tracks-form {
   display: grid;
-  gap: 10px;
+  gap: 1rem;
   justify-content: center;
-  padding: 5px;
-  margin-top: 50px;
 }
 
 .track {
   display: grid;
-  gap: 10px;
+  gap: 1rem;
   width: 100%;
+  margin: .5rem 0;
   padding: .5rem;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   background: lightblue;
   border-radius: .5rem;
 }
@@ -56,7 +71,7 @@ input[type="checkbox"] {
   font-weight: bold;
   padding: 5px 10px;
   border: 2px solid transparent;
-  border-radius: 50px;
+  border-radius: 100px;
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
@@ -84,8 +99,11 @@ input[type="checkbox"]:checked+label:hover {
 }
 
 .update-audio-submit {
-  background: red;
+  background: blue;
+  color: white;
   border-radius: .5rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   width: fit-content;
+  padding: 1rem;
+  margin-top: 2rem;
 }

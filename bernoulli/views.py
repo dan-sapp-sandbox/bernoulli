@@ -13,6 +13,7 @@ import numpy as np
 AudioSegment.converter = "C:\ffmpeg\ffmpeg\bin\ffmpeg.exe"
 
 def landing(request):
+    bpm = 400
     loop_length = 16
     loop_array = list(range(loop_length)) 
     
@@ -27,16 +28,17 @@ def landing(request):
     base_config = defaultBaseBeats
     hihat_config = defaultHiHatBeats
     snare_config = defaultSnareBeats
-    generateAudioTrack(base_config, hihat_config, snare_config)
+    generateAudioTrack(bpm, base_config, hihat_config, snare_config)
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
-    audio_files = glob.glob(os.path.join(audio_folder, '*.wav'))
+    audio_files = glob.glob(os.path.join(audio_folder, '*final*.wav'))
     audio_files = [os.path.relpath(file, settings.MEDIA_ROOT) for file in audio_files]
 
     return render(request, 'landing.html', {
         'audio_files': audio_files,
         'tracks': tracks,
-        'loop_array': loop_array
+        'loop_array': loop_array,
+        'bpm': bpm
     })
     
 def generate_audio_sequence(beats_config, audio_clip, silence_clip, beats_per_measure):
@@ -45,8 +47,8 @@ def generate_audio_sequence(beats_config, audio_clip, silence_clip, beats_per_me
         for i in range(beats_per_measure)
     ]
   
-def generateAudioTrack(bass_config, hihat_config, snare_config):
-    beats_per_minute  = 400
+def generateAudioTrack(bpm, bass_config, hihat_config, snare_config):
+    beats_per_minute  = bpm
     beats_per_measure  = 16
     ms_per_beat  = (60 * 1000) / (beats_per_minute )
     
@@ -69,11 +71,11 @@ def generateAudioTrack(bass_config, hihat_config, snare_config):
     concated_hihats = concatenate(hihats)
     concated_snares = concatenate(snares)
 
-    concated_bass_drums_file = "media/audio/concatenated_base.wav"
+    concated_bass_drums_file = "media/audio/final_base.wav"
     concated_bass_drums.export(concated_bass_drums_file, format="wav")
-    concated_hihats_file = "media/audio/concatenated_hihats.wav"
+    concated_hihats_file = "media/audio/final_hihats.wav"
     concated_hihats.export(concated_hihats_file, format="wav")
-    concated_snares_file = "media/audio/concatenated_snares.wav"
+    concated_snares_file = "media/audio/final_snares.wav"
     concated_snares.export(concated_snares_file, format="wav")
     
     # plot_waveform(output_file)
@@ -155,14 +157,16 @@ def plot_waveform(input_file):
     plt.show()
   
 def update_audio(request):
+    bpm = request.POST.get('bpm')
     base_beats = request.POST.getlist('track-1')
     hihat_beats = request.POST.getlist('track-2')
     snare_beats = request.POST.getlist('track-3')
+    bpm = int(bpm)
     bass_config = list(map(int, base_beats))
     hihat_config = list(map(int, hihat_beats))
     snare_config = list(map(int, snare_beats))
     
-    generateAudioTrack(bass_config, hihat_config, snare_config)
+    generateAudioTrack(bpm, bass_config, hihat_config, snare_config)
     tracks = [
         {'track_id': 1, 'beats': bass_config, 'name': 'Bass Drum'},
         {'track_id': 2, 'beats': hihat_config, 'name': 'Hi-Hat'},
@@ -172,11 +176,12 @@ def update_audio(request):
     loop_array = list(range(loop_length)) 
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
-    audio_files = glob.glob(os.path.join(audio_folder, '*.wav'))
+    audio_files = glob.glob(os.path.join(audio_folder, '*final*.wav'))
     audio_files = [os.path.relpath(file, settings.MEDIA_ROOT) for file in audio_files]
     
     return render(request, 'landing.html', {
         'audio_files': audio_files,
         'tracks': tracks,
-        'loop_array': loop_array
+        'loop_array': loop_array,
+        'bpm': bpm
     })
