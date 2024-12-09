@@ -5,8 +5,8 @@ body {
 .container {
   display: grid;
   justify-items: center;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   grid-gap: .5rem;
 }
 
@@ -14,10 +14,15 @@ body {
   background: rgb(52, 14, 113);
   border: 1px solid black;
   border-radius: 1rem;
-  padding: 1rem;
+  padding: .5rem;
 }
 .player-wrapper p {
   color: white;
+  font-size: 1.5rem;
+}
+
+.instrument {
+  font-weight: bold;
   font-size: 1.5rem;
 }
 
@@ -33,9 +38,10 @@ body {
   display: grid;
   gap: 10px;
   width: 100%;
-  padding: 5px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: .5rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   background: lightblue;
+  border-radius: .5rem;
 }
 
 input[type="checkbox"] {
@@ -54,6 +60,7 @@ input[type="checkbox"] {
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
+  text-align: center;
 }
 
 input[type="checkbox"]:checked+label {

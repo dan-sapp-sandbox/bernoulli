@@ -28,22 +28,24 @@
     </div>
     <form method="post" class="tracks-container" action="{% url 'update_audio' %}">
       {% csrf_token %}
+      {% for track in tracks %}
+      <div class="instrument">{{track.name}}</div>
       <div class="track">
-        <input type="checkbox" name="track-1" value="1">
-        <label for="1">1</label>
-        
-        <input type="checkbox" name="track-1" value="2">
-        <label for="2">2</label>
-
-        <input type="checkbox" name="track-1" value="3">
-        <label for="3">3</label>
-
-        <input type="checkbox" name="track-1" value="4">
-        <label for="4">4</label>
+        {% for beat in loop_array %}
+        <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
+        value="{{ beat }}"
+        {% if beat in track.beats %}checked{% endif %}>
+        <label for="track-{{track.track_id}}-beat-{{ beat }}">{{ forloop.counter }}</label>
+        {% endfor %}
       </div>
-      <button class="update-audio-submit" type="submit">Submit</button>
+      {% endfor %}
+      <button class="update-audio-submit" type="submit">Update</button>
     </form>
   </main>
+  <script>
+    // Disable navigate away confirmation
+    window.onbeforeunload = null;
+  </script>
 </body>
 
 </html>

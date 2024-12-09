@@ -13,51 +13,57 @@ import numpy as np
 AudioSegment.converter = "C:\ffmpeg\ffmpeg\bin\ffmpeg.exe"
 
 def landing(request):
+    loop_length = 16
+    loop_array = list(range(loop_length)) 
     
-    generateAudioTrack()
+    defaultBaseBeats = [0, 4, 8, 11, 13]
+    defaultHiHatBeats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    defaultSnareBeats = [2, 6, 10, 14]
+    tracks = [
+        {'track_id': 1, 'beats': defaultBaseBeats, 'name': 'Bass Drum'},
+        {'track_id': 2, 'beats': defaultHiHatBeats, 'name': 'Hi-Hat'},
+        {'track_id': 3, 'beats': defaultSnareBeats, 'name': 'Snare Drum'},
+    ]
+    base_config = defaultBaseBeats
+    hihat_config = defaultHiHatBeats
+    snare_config = defaultSnareBeats
+    generateAudioTrack(base_config, hihat_config, snare_config)
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
     audio_files = glob.glob(os.path.join(audio_folder, '*.wav'))
     audio_files = [os.path.relpath(file, settings.MEDIA_ROOT) for file in audio_files]
 
-    return render(request, 'landing.html', {'audio_files': audio_files})
+    return render(request, 'landing.html', {
+        'audio_files': audio_files,
+        'tracks': tracks,
+        'loop_array': loop_array
+    })
+    
+def generate_audio_sequence(beats_config, audio_clip, silence_clip, beats_per_measure):
+    return [
+        audio_clip if i in beats_config else silence_clip
+        for i in range(beats_per_measure)
+    ]
   
-def generateAudioTrack():
-    beatsPerMinute = 500
-    beatsPerMeasure = 32
-    msPerBeat = (60 * 1000) / (beatsPerMinute)
+def generateAudioTrack(bass_config, hihat_config, snare_config):
+    beats_per_minute  = 400
+    beats_per_measure  = 16
+    ms_per_beat  = (60 * 1000) / (beats_per_minute )
     
     bd= "media/audio/temp_base.wav"
-    shorten_audio("media/audio/drums/kick-big.wav", bd, msPerBeat)
+    shorten_audio("media/audio/drums/kick-big.wav", bd, ms_per_beat)
     hh = "media/audio/temp_hihat.wav"
-    shorten_audio("media/audio/drums/hihat-plain.wav", hh, msPerBeat)
+    shorten_audio("media/audio/drums/hihat-plain.wav", hh, ms_per_beat)
     sn = "media/audio/temp_snare.wav"
-    shorten_audio("media/audio/drums/snare-smasher.wav", sn, msPerBeat)
+    shorten_audio("media/audio/drums/snare-smasher.wav", sn, ms_per_beat)
     si = "media/audio/silence_beat.wav"
-    silence_bit = AudioSegment.silent(duration=msPerBeat)
+    silence_bit = AudioSegment.silent(duration=ms_per_beat)
     silence_bit.export(si, format="wav")
+    
+    bass_drums = generate_audio_sequence(bass_config, bd, si, beats_per_measure)
+    hihats = generate_audio_sequence(hihat_config, hh, si, beats_per_measure)
+    snares = generate_audio_sequence(snare_config, sn, si, beats_per_measure)
 
-    bass_config = [0, 4, 6, 12, 16, 20, 22, 28]
-    bass_drums = []
-    for i in range(beatsPerMeasure - 1):
-        if i in bass_config:
-            bass_drums.append(bd)
-        else:
-            bass_drums.append(si)
-    hihat_config = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
-    hihats = []
-    for i in range(beatsPerMeasure - 1):
-        if i in hihat_config:
-            hihats.append(hh)
-        else:
-            hihats.append(si)
-    snare_config = [2, 10, 18, 26]
-    snares = []
-    for i in range(beatsPerMeasure - 1):
-        if i in snare_config:
-            snares.append(sn)
-        else:
-            snares.append(si)
     
     concated_bass_drums = concatenate(bass_drums)
     concated_hihats = concatenate(hihats)
@@ -73,10 +79,10 @@ def generateAudioTrack():
     # plot_waveform(output_file)
     
     combined_file = "media/audio/concatenated_output3.wav"
-    combine_in_parallel([concated_bass_drums_file, concated_hihats_file, concated_snares_file], combined_file, ((msPerBeat - 8) * beatsPerMeasure))
+    combine_in_parallel([concated_bass_drums_file, concated_hihats_file, concated_snares_file], combined_file, ((ms_per_beat - 8) * beats_per_measure))
     
     final_output = "media/audio/final_output.wav"
-    shorten_audio(combined_file, final_output, ((msPerBeat - 8) * beatsPerMeasure))
+    shorten_audio(combined_file, final_output, ((ms_per_beat - 8) * beats_per_measure))
       
   
 def cloneWithEffect():
@@ -91,23 +97,19 @@ def cloneWithEffect():
         o.write(effected)
         
 def concatenate(audio_files, crossfade_ms=5):
-    combined = AudioSegment.empty()
+    combined = AudioSegment.from_file(audio_files[0])
+    
+    sample_rate = combined.frame_rate
+    num_channels = combined.channels
 
-    first_audio = AudioSegment.from_file(audio_files[0])
-    sample_rate = first_audio.frame_rate
-    num_channels = first_audio.channels
-
-    for idx, file in enumerate(audio_files):
+    for file in audio_files[1:]:
         audio = AudioSegment.from_file(file)
-
+        
         if audio.frame_rate != sample_rate or audio.channels != num_channels:
             audio = audio.set_frame_rate(sample_rate).set_channels(num_channels)
-
-        if idx > 0:
-            combined = combined.append(audio, crossfade=crossfade_ms)
-        else:
-            combined += audio
-
+        
+        combined = combined.append(audio, crossfade=crossfade_ms)
+    
     return combined
 
 def shorten_audio(input_file, output_file, target_length_ms):
@@ -142,21 +144,39 @@ def combine_in_parallel(audio_files, output_file, duration=None):
     combined.export(output_file, format="wav")
     
 def plot_waveform(input_file):
-  audio = AudioSegment.from_file(input_file)
-  samples = np.array(audio.get_array_of_samples())
-  
-  plt.figure(figsize=(10, 4))
-  plt.plot(samples)
-  plt.title(f'Waveform of {input_file}')
-  plt.xlabel('Sample')
-  plt.ylabel('Amplitude')
-  plt.show()
+    audio = AudioSegment.from_file(input_file)
+    samples = np.array(audio.get_array_of_samples())
+    
+    plt.figure(figsize=(10, 4))
+    plt.plot(samples)
+    plt.title(f'Waveform of {input_file}')
+    plt.xlabel('Sample')
+    plt.ylabel('Amplitude')
+    plt.show()
   
 def update_audio(request):
-    generateAudioTrack()
+    base_beats = request.POST.getlist('track-1')
+    hihat_beats = request.POST.getlist('track-2')
+    snare_beats = request.POST.getlist('track-3')
+    bass_config = list(map(int, base_beats))
+    hihat_config = list(map(int, hihat_beats))
+    snare_config = list(map(int, snare_beats))
+    
+    generateAudioTrack(bass_config, hihat_config, snare_config)
+    tracks = [
+        {'track_id': 1, 'beats': bass_config, 'name': 'Bass Drum'},
+        {'track_id': 2, 'beats': hihat_config, 'name': 'Hi-Hat'},
+        {'track_id': 3, 'beats': snare_config, 'name': 'Snare Drum'},
+    ]
+    loop_length = 16
+    loop_array = list(range(loop_length)) 
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
     audio_files = glob.glob(os.path.join(audio_folder, '*.wav'))
     audio_files = [os.path.relpath(file, settings.MEDIA_ROOT) for file in audio_files]
     
-    return render(request, 'landing.html', {'audio_files': audio_files})
+    return render(request, 'landing.html', {
+        'audio_files': audio_files,
+        'tracks': tracks,
+        'loop_array': loop_array
+    })
