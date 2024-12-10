@@ -18,7 +18,6 @@ def landing(request):
     loop_array = list(range(loop_length)) 
     
     defaultBaseBeats = [0, 4, 8, 11, 13]
-    # defaultHiHatBeats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     defaultHiHatBeats = [0, 2, 4, 6, 8, 10, 12, 14]
     defaultSnareBeats = [2, 6, 7, 10, 14]
     defaultSizzleBeats = [0, 2, 4, 6, 8, 10, 12, 14]
@@ -45,11 +44,19 @@ def landing(request):
         'bpm': bpm
     })
     
-def generate_audio_sequence(beats_config, audio_clip, silence_clip, beats_per_measure):
-    return [
-        audio_clip if i in beats_config else silence_clip
-        for i in range(beats_per_measure)
-    ]
+def generate_audio_sequence(beats_config, short_audio_clip, audio_clip, silence_clip, beats_per_measure):
+    sequence = []
+    for i in range(beats_per_measure):
+        if i in beats_config:
+            if i + 1 not in beats_config:
+                sequence.append(audio_clip)
+            else:
+                sequence.append(short_audio_clip)
+        elif i - 1 in beats_config:
+            continue
+        else:
+            sequence.append(silence_clip)
+    return sequence
   
 def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_config):
     beats_per_minute  = bpm * 2
@@ -60,22 +67,11 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     silence_bit = AudioSegment.silent(duration=ms_per_beat)
     silence_bit.export(silent_sample, format="wav")
     
-    base_sample= "media/audio/temp_base.wav"
-    shorten_audio("media/audio/drums/kick-big.wav", base_sample, ms_per_beat)
-    bass_drums = generate_audio_sequence(bass_config, base_sample, silent_sample, beats_per_measure)
-    
-    hihat_sample = "media/audio/temp_hihat.wav"
-    shorten_audio("media/audio/drums/hihat-plain.wav", hihat_sample, ms_per_beat)
-    hihats = generate_audio_sequence(hihat_config, hihat_sample, silent_sample, beats_per_measure)
-    
-    snare_sample = "media/audio/temp_snare.wav"
-    shorten_audio("media/audio/drums/snare-noise.wav", snare_sample, ms_per_beat)
-    snares = generate_audio_sequence(snare_config, snare_sample, silent_sample, beats_per_measure)
-    
-    sizzle_sample = "media/audio/temp_sizzle.wav"
-    shorten_audio("media/audio/drums/openhat-tight.wav", sizzle_sample, ms_per_beat)
-    sizzles = generate_audio_sequence(sizzle_config, sizzle_sample, silent_sample, beats_per_measure)
-    
+    bass_drums = process_track("bass", bass_config, "media/audio/drums/kick-big.wav", ms_per_beat)
+    hihats = process_track("hihat", hihat_config, "media/audio/drums/hihat-plain.wav", ms_per_beat)
+    snares = process_track("snare", snare_config, "media/audio/drums/snare-noise.wav", ms_per_beat)
+    sizzles = process_track("sizzle", sizzle_config, "media/audio/drums/openhat-tight.wav", ms_per_beat)
+
     concated_bass_drums = concatenate(bass_drums)
     concated_hihats = concatenate(hihats)
     concated_snares = concatenate(snares)
@@ -98,7 +94,7 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     ], combined_file, ((ms_per_beat - 8) * beats_per_measure))
     
     final_output = "media/audio/final_output.wav"
-    shorten_audio(combined_file, final_output, ((ms_per_beat - 8) * beats_per_measure))
+    create_shortened_sample(combined_file, final_output, ((ms_per_beat - 8) * beats_per_measure))
       
   
 def cloneWithEffect():
@@ -127,22 +123,32 @@ def concatenate(audio_files, crossfade_ms=5):
         combined = combined.append(audio, crossfade=crossfade_ms)
     
     return combined
+           
+def create_shortened_sample(input_file, output_file, target_length_ms):
+    try:
+        audio = AudioSegment.from_file(input_file)
+        if len(audio) < target_length_ms:
+            silence_duration = target_length_ms - len(audio)
+            silence = AudioSegment.silent(duration=silence_duration)
+            audio += silence
+        audio = audio[:target_length_ms]
+        audio.export(output_file, format="wav")
+        return output_file
+    except Exception as e:
+        print(f"Error creating shortened sample: {e}")
+        return None
 
-def shorten_audio(input_file, output_file, target_length_ms):
-    audio = AudioSegment.from_file(input_file)
-    if len(audio) < target_length_ms:
-        silence_duration_ms = target_length_ms - len(audio)
-        silence = AudioSegment.silent(duration=silence_duration_ms)
-        audio = audio + silence
-    
-    audio = audio[:target_length_ms]
-    
-    samples = np.array(audio.get_array_of_samples())
-    samples = samples.astype(np.float32) / (2 ** (audio.sample_width * 8 - 1))
+def process_track(track_name, beats_config, base_file, ms_per_beat):
+    short_sample = f"media/audio/short_{track_name}.wav"
+    reg_sample = f"media/audio/reg_{track_name}.wav"
+    silent_sample = "media/audio/silence_beat.wav"
 
-    with AudioFile(output_file, 'w', samplerate=audio.frame_rate, num_channels=audio.channels) as f:
-        f.write(samples)
-        
+    create_shortened_sample(base_file, short_sample, ms_per_beat)
+    create_shortened_sample(base_file, reg_sample, ms_per_beat * 2)
+
+    return generate_audio_sequence(beats_config, short_sample, reg_sample, silent_sample, 16)
+
+
 def combine_in_parallel(audio_files, output_file, duration=None):
     combined = AudioSegment.from_file(audio_files[0])
 
@@ -159,16 +165,16 @@ def combine_in_parallel(audio_files, output_file, duration=None):
 
     combined.export(output_file, format="wav")
     
-def plot_waveform(input_file):
-    audio = AudioSegment.from_file(input_file)
-    samples = np.array(audio.get_array_of_samples())
+# def plot_waveform(input_file):
+#     audio = AudioSegment.from_file(input_file)
+#     samples = np.array(audio.get_array_of_samples())
     
-    plt.figure(figsize=(10, 4))
-    plt.plot(samples)
-    plt.title(f'Waveform of {input_file}')
-    plt.xlabel('Sample')
-    plt.ylabel('Amplitude')
-    plt.show()
+#     plt.figure(figsize=(10, 4))
+#     plt.plot(samples)
+#     plt.title(f'Waveform of {input_file}')
+#     plt.xlabel('Sample')
+#     plt.ylabel('Amplitude')
+#     plt.show()
   
 def update_audio(request):
     bpm = request.POST.get('bpm')
