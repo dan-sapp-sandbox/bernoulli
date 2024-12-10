@@ -27,14 +27,17 @@
     <div class="tracks-container">
     <form method="post" class="tracks-form" action="{% url 'update_audio' %}">
       {% csrf_token %}
+      <div class="bpm-label">Tempo</div>
       <input class='bpm' type="number" id='bpm' name="bpm" value="{{bpm}}">
       {% for track in tracks %}
       <div class="instrument">{{track.name}}</div>
       <div class="track">
         {% for beat in loop_array %}
-        <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
+        <div class="beat">
+          <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
           value="{{ beat }}" {% if beat in track.beats %}checked{% endif %}>
-        <label for="track-{{track.track_id}}-beat-{{ beat }}"></label>
+          <label for="track-{{track.track_id}}-beat-{{ beat }}"></label>
+        </div>
         {% endfor %}
       </div>
       {% endfor %}

@@ -19,12 +19,20 @@ main {
   border: 1px solid black;
   border-radius: 1rem;
   padding: .5rem;
+  display: flex;
+  width: 380px;
+  justify-content: space-between;
 }
 
 .player-wrapper p {
   color: white;
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin: 0 0 .3rem;
+}
+
+audio {
+  width: 150px;
+  height: 35px;
 }
 
 .instrument {
@@ -32,10 +40,16 @@ main {
   font-size: 1.5rem;
 }
 
-.bpm {
+.bpm-label {
   font-size: 1.6rem;
-  width: fit-content;
-  padding: 1rem;
+  font-weight: bold;
+  background: unset;
+}
+
+.bpm {
+  font-size: 1.3rem;
+  width: 80px;
+  padding: .5rem;
   border-radius: 1rem;
 }
 
@@ -44,37 +58,46 @@ main {
 }
 
 .tracks-form {
-  display: grid;
-  gap: 1rem;
   justify-content: center;
 }
 
 .track {
-  display: grid;
-  gap: .5rem;
-  width: 100%;
-  margin: .5rem 0;
-  padding: .5rem;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  display: flex;
+  margin: 2px 0;
   background: lightblue;
   border-radius: .5rem;
+  width: fit-content;
 }
 
 input[type="checkbox"] {
   display: none;
 }
 
+.beat {
+  padding: 3px;
+  height: 3.3vw;
+}
+
+.beat:nth-child(4n) {
+  border-right: 1px solid rgb(230, 113, 236, 0.8);
+}
+
+.beat:last-of-type {
+  border-right: none;
+}
+
 .track label {
+  justify-self: center;
   display: inline-block;
   color: white;
   border: 2px solid transparent;
-  border-radius: 15rem;
+  border-radius: .5rem;
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
   text-align: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2.8vw;
+  height: 2.8vw;
 }
 
 input[type="checkbox"]:checked+label {
