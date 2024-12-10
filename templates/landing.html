@@ -12,8 +12,6 @@
 
 <body>
   <main class="home-main">
-    <h1>Available Audio Files</h1>
-
     <div class="container">
       {% for audio_file in audio_files %}
       <div class="player-wrapper">
@@ -36,7 +34,7 @@
         {% for beat in loop_array %}
         <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
           value="{{ beat }}" {% if beat in track.beats %}checked{% endif %}>
-        <label for="track-{{track.track_id}}-beat-{{ beat }}">{{ forloop.counter }}</label>
+        <label for="track-{{track.track_id}}-beat-{{ beat }}"></label>
         {% endfor %}
       </div>
       {% endfor %}

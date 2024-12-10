@@ -13,22 +13,26 @@ import numpy as np
 AudioSegment.converter = "C:\ffmpeg\ffmpeg\bin\ffmpeg.exe"
 
 def landing(request):
-    bpm = 400
+    bpm = 175
     loop_length = 16
     loop_array = list(range(loop_length)) 
     
     defaultBaseBeats = [0, 4, 8, 11, 13]
-    defaultHiHatBeats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    defaultSnareBeats = [2, 6, 10, 14]
+    # defaultHiHatBeats = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    defaultHiHatBeats = [0, 2, 4, 6, 8, 10, 12, 14]
+    defaultSnareBeats = [2, 6, 7, 10, 14]
+    defaultSizzleBeats = [0, 2, 4, 6, 8, 10, 12, 14]
     tracks = [
         {'track_id': 1, 'beats': defaultBaseBeats, 'name': 'Bass Drum'},
         {'track_id': 2, 'beats': defaultHiHatBeats, 'name': 'Hi-Hat'},
         {'track_id': 3, 'beats': defaultSnareBeats, 'name': 'Snare Drum'},
+        {'track_id': 4, 'beats': defaultSizzleBeats, 'name': 'Open Hi-Hat'},
     ]
     base_config = defaultBaseBeats
     hihat_config = defaultHiHatBeats
     snare_config = defaultSnareBeats
-    generateAudioTrack(bpm, base_config, hihat_config, snare_config)
+    sizzle_config = defaultSizzleBeats
+    generateAudioTrack(bpm, base_config, hihat_config, snare_config, sizzle_config)
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
     audio_files = glob.glob(os.path.join(audio_folder, '*final*.wav'))
@@ -47,29 +51,35 @@ def generate_audio_sequence(beats_config, audio_clip, silence_clip, beats_per_me
         for i in range(beats_per_measure)
     ]
   
-def generateAudioTrack(bpm, bass_config, hihat_config, snare_config):
-    beats_per_minute  = bpm
+def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_config):
+    beats_per_minute  = bpm * 2
     beats_per_measure  = 16
     ms_per_beat  = (60 * 1000) / (beats_per_minute )
     
-    bd= "media/audio/temp_base.wav"
-    shorten_audio("media/audio/drums/kick-big.wav", bd, ms_per_beat)
-    hh = "media/audio/temp_hihat.wav"
-    shorten_audio("media/audio/drums/hihat-plain.wav", hh, ms_per_beat)
-    sn = "media/audio/temp_snare.wav"
-    shorten_audio("media/audio/drums/snare-smasher.wav", sn, ms_per_beat)
-    si = "media/audio/silence_beat.wav"
+    silent_sample = "media/audio/silence_beat.wav"
     silence_bit = AudioSegment.silent(duration=ms_per_beat)
-    silence_bit.export(si, format="wav")
+    silence_bit.export(silent_sample, format="wav")
     
-    bass_drums = generate_audio_sequence(bass_config, bd, si, beats_per_measure)
-    hihats = generate_audio_sequence(hihat_config, hh, si, beats_per_measure)
-    snares = generate_audio_sequence(snare_config, sn, si, beats_per_measure)
-
+    base_sample= "media/audio/temp_base.wav"
+    shorten_audio("media/audio/drums/kick-big.wav", base_sample, ms_per_beat)
+    bass_drums = generate_audio_sequence(bass_config, base_sample, silent_sample, beats_per_measure)
+    
+    hihat_sample = "media/audio/temp_hihat.wav"
+    shorten_audio("media/audio/drums/hihat-plain.wav", hihat_sample, ms_per_beat)
+    hihats = generate_audio_sequence(hihat_config, hihat_sample, silent_sample, beats_per_measure)
+    
+    snare_sample = "media/audio/temp_snare.wav"
+    shorten_audio("media/audio/drums/snare-noise.wav", snare_sample, ms_per_beat)
+    snares = generate_audio_sequence(snare_config, snare_sample, silent_sample, beats_per_measure)
+    
+    sizzle_sample = "media/audio/temp_sizzle.wav"
+    shorten_audio("media/audio/drums/openhat-tight.wav", sizzle_sample, ms_per_beat)
+    sizzles = generate_audio_sequence(sizzle_config, sizzle_sample, silent_sample, beats_per_measure)
     
     concated_bass_drums = concatenate(bass_drums)
     concated_hihats = concatenate(hihats)
     concated_snares = concatenate(snares)
+    concated_sizzles = concatenate(sizzles)
 
     concated_bass_drums_file = "media/audio/final_base.wav"
     concated_bass_drums.export(concated_bass_drums_file, format="wav")
@@ -77,11 +87,15 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config):
     concated_hihats.export(concated_hihats_file, format="wav")
     concated_snares_file = "media/audio/final_snares.wav"
     concated_snares.export(concated_snares_file, format="wav")
+    concated_sizzles_file = "media/audio/final_sizzles.wav"
+    concated_sizzles.export(concated_sizzles_file, format="wav")
     
     # plot_waveform(output_file)
     
     combined_file = "media/audio/concatenated_output3.wav"
-    combine_in_parallel([concated_bass_drums_file, concated_hihats_file, concated_snares_file], combined_file, ((ms_per_beat - 8) * beats_per_measure))
+    combine_in_parallel([
+        concated_bass_drums_file, concated_hihats_file, concated_snares_file, concated_sizzles_file
+    ], combined_file, ((ms_per_beat - 8) * beats_per_measure))
     
     final_output = "media/audio/final_output.wav"
     shorten_audio(combined_file, final_output, ((ms_per_beat - 8) * beats_per_measure))
@@ -161,16 +175,20 @@ def update_audio(request):
     base_beats = request.POST.getlist('track-1')
     hihat_beats = request.POST.getlist('track-2')
     snare_beats = request.POST.getlist('track-3')
+    sizzle_beats = request.POST.getlist('track-4')
+    
     bpm = int(bpm)
     bass_config = list(map(int, base_beats))
     hihat_config = list(map(int, hihat_beats))
     snare_config = list(map(int, snare_beats))
+    sizzle_config = list(map(int, sizzle_beats))
     
-    generateAudioTrack(bpm, bass_config, hihat_config, snare_config)
+    generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_config)
     tracks = [
         {'track_id': 1, 'beats': bass_config, 'name': 'Bass Drum'},
         {'track_id': 2, 'beats': hihat_config, 'name': 'Hi-Hat'},
         {'track_id': 3, 'beats': snare_config, 'name': 'Snare Drum'},
+        {'track_id': 4, 'beats': sizzle_config, 'name': 'Open Hi-Hat'},
     ]
     loop_length = 16
     loop_array = list(range(loop_length)) 
