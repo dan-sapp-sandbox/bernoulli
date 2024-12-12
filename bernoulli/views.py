@@ -14,14 +14,14 @@ AudioSegment.converter = "C:\ffmpeg\ffmpeg\bin\ffmpeg.exe"
 
 def landing(request):
     bpm = 175
-    loop_length = 16
+    loop_length = 32
     loop_array = list(range(loop_length)) 
     
-    defaultBaseBeats = [0, 4, 8, 11, 13]
-    defaultHiHatBeats = [0, 2, 4, 6, 8, 10, 12, 14]
-    defaultSnareBeats = [2, 6, 7, 10, 14]
-    defaultSizzleBeats = [0, 2, 4, 6, 8, 10, 12, 14]
-    defaultBassGuitarBeats = [0, 2, 4, 6, 8, 10, 12, 14]
+    defaultBaseBeats = [0, 4, 8, 11, 13, 16, 20, 24, 27, 29]
+    defaultHiHatBeats = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+    defaultSnareBeats = [2, 6, 7, 10, 14, 18, 24, 25, 28]
+    defaultSizzleBeats = [6, 14, 22, 30]
+    defaultBassGuitarBeats = [0, 4, 8, 11, 13, 16, 20, 24, 27, 29]
     tracks = [
         {'track_id': 1, 'beats': defaultBaseBeats, 'name': 'Bass Drum'},
         {'track_id': 2, 'beats': defaultHiHatBeats, 'name': 'Hi-Hat'},
@@ -37,7 +37,7 @@ def landing(request):
     generateAudioTrack(bpm, base_config, hihat_config, snare_config, sizzle_config, bass_guitar_config)
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
-    audio_files = glob.glob(os.path.join(audio_folder, '*final*.wav'))
+    audio_files = glob.glob(os.path.join(audio_folder, '*final_output.wav'))
     audio_files = [os.path.relpath(file, settings.MEDIA_ROOT) for file in audio_files]
 
     return render(request, 'landing.html', {
@@ -63,7 +63,7 @@ def generate_audio_sequence(beats_config, short_audio_clip, audio_clip, silence_
   
 def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_config, bass_guitar_config):
     beats_per_minute  = bpm * 2
-    beats_per_measure  = 16
+    beats_per_measure  = 32
     ms_per_beat  = (60 * 1000) / (beats_per_minute )
     
     silent_sample = "media/audio/silence_beat.wav"
@@ -176,7 +176,7 @@ def process_track(track_name, beats_config, base_file, ms_per_beat):
     create_shortened_sample(base_file, short_sample, ms_per_beat)
     create_shortened_sample(base_file, reg_sample, ms_per_beat * 2)
 
-    return generate_audio_sequence(beats_config, short_sample, reg_sample, silent_sample, 16)
+    return generate_audio_sequence(beats_config, short_sample, reg_sample, silent_sample, 32)
 
 
 def combine_in_parallel(audio_files, output_file, duration=None):
@@ -229,11 +229,11 @@ def update_audio(request):
         {'track_id': 4, 'beats': sizzle_config, 'name': 'Open Hi-Hat'},
         {'track_id': 5, 'beats': bass_guitar_config, 'name': 'Bass Guitar'},
     ]
-    loop_length = 16
+    loop_length = 32
     loop_array = list(range(loop_length)) 
     
     audio_folder = os.path.join(settings.MEDIA_ROOT, 'audio')
-    audio_files = glob.glob(os.path.join(audio_folder, '*final*.wav'))
+    audio_files = glob.glob(os.path.join(audio_folder, '*final_output.wav'))
     audio_files = [os.path.relpath(file, settings.MEDIA_ROOT) for file in audio_files]
     
     return render(request, 'landing.html', {

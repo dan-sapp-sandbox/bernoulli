@@ -38,6 +38,7 @@ audio {
 .instrument {
   font-weight: bold;
   font-size: 1.5rem;
+  position: relative;
 }
 
 .bpm-label {
@@ -51,9 +52,10 @@ audio {
   width: 80px;
   padding: .5rem;
   border-radius: 1rem;
+  margin-bottom: 10px;
 }
 
-.tracks-container {
+.form-container {
   margin: 30px 0;
 }
 
@@ -61,12 +63,86 @@ audio {
   justify-content: center;
 }
 
+.tracks-container {
+  position: relative;
+  background: rgb(157, 157, 225);
+  padding: 5px;
+  border: 1px solid purple;
+  border-radius: .5rem;
+  width: calc(100vw - 30px);
+  overflow-x: scroll;
+}
+
+.tracks-container::-webkit-scrollbar {
+  display: none;
+}
+
+.tracks-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.track-guide {
+  position: absolute;
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
+  overflow: hidden;
+}
+
+.track-guide .bar {
+  position: absolute;
+  width: 25%;
+  top: 0px;
+  bottom: 0px;
+}
+
+.bar:nth-child(1) {
+  background: rgb(157, 157, 225);
+  left: 0;
+}
+
+.bar:nth-child(2) {
+  background: rgb(138, 138, 210);
+  left: calc(100%/8);
+}
+
+.bar:nth-child(3) {
+  background: rgb(157, 157, 225);
+  left: calc(200%/8);
+}
+
+.bar:nth-child(4) {
+  background: rgb(138, 138, 210);
+  left: calc(300%/8);
+}
+.bar:nth-child(5) {
+  background: rgb(157, 157, 225);
+  left: calc(400%/8);
+}
+
+.bar:nth-child(6) {
+  background: rgb(138, 138, 210);
+  left: calc(500%/8);
+}
+
+.bar:nth-child(7) {
+  background: rgb(157, 157, 225);
+  left: calc(600%/8);
+}
+
+.bar:nth-child(8) {
+  background: rgb(138, 138, 210);
+  left: calc(700%/8);
+}
+
 .track {
+  position: relative;
   display: flex;
   margin: 2px 0;
-  background: lightblue;
+  background: rgba(173, 216, 230, 0.6);
   border-radius: .5rem;
-  width: fit-content;
+  width: max-content;
+  z-index: 2;
 }
 
 input[type="checkbox"] {
@@ -74,16 +150,10 @@ input[type="checkbox"] {
 }
 
 .beat {
-  padding: 3px;
-  height: 3.3vw;
-}
-
-.beat:nth-child(4n) {
-  border-right: 1px solid rgb(230, 113, 236, 0.8);
-}
-
-.beat:last-of-type {
-  border-right: none;
+  padding: 5px;
+  width: calc(((100vw - 32px) / 32) - 10px);
+  height: 100%;
+  opacity: 1;
 }
 
 .track label {
@@ -96,8 +166,15 @@ input[type="checkbox"] {
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
   text-align: center;
-  width: 2.8vw;
-  height: 2.8vw;
+  width: 100%;
+  height: 5.0vw;
+  opacity: 1;
+}
+
+@media (width <=600px) {
+  .track label {
+    width: 100%;
+  }
 }
 
 input[type="checkbox"]:checked+label {
@@ -106,18 +183,22 @@ input[type="checkbox"]:checked+label {
 
 label {
   background-color: rgb(230, 113, 236, 0.3);
+  opacity: 1;
 }
 
 label:hover {
   background-color: rgb(230, 113, 236, 0.5);
+  opacity: 1;
 }
 
 input[type="checkbox"]:checked+label {
   background-color: rgb(230, 113, 236, 0.8);
+  opacity: 1;
 }
 
 input[type="checkbox"]:checked+label:hover {
   background-color: rgb(230, 113, 236, 0.65);
+  opacity: 1;
 }
 
 .update-audio-submit {

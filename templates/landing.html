@@ -12,38 +12,49 @@
 
 <body>
   <main class="home-main">
-    <div class="container">
-      {% for audio_file in audio_files %}
-      <div class="player-wrapper">
-        <p>{{ audio_file }}</p>
-
-        <audio controls loop>
-          <source src="media/{{ MEDIA_URL }}{{ audio_file }}" type="audio/wav">
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-      {% endfor %}
-    </div>
-    <div class="tracks-container">
-    <form method="post" class="tracks-form" action="{% url 'update_audio' %}">
-      {% csrf_token %}
-      <div class="bpm-label">Tempo</div>
-      <input class='bpm' type="number" id='bpm' name="bpm" value="{{bpm}}">
-      {% for track in tracks %}
-      <div class="instrument">{{track.name}}</div>
-      <div class="track">
-        {% for beat in loop_array %}
-        <div class="beat">
-          <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
-          value="{{ beat }}" {% if beat in track.beats %}checked{% endif %}>
-          <label for="track-{{track.track_id}}-beat-{{ beat }}"></label>
+    <div class="form-container">
+      <form method="post" class="tracks-form" action="{% url 'update_audio' %}">
+        {% csrf_token %}
+        <div class="container">
+          {% for audio_file in audio_files %}
+          <div class="player-wrapper">
+            <p>{{ audio_file }}</p>
+            <audio controls loop>
+              <source src="media/{{ MEDIA_URL }}{{ audio_file }}" type="audio/wav">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+          {% endfor %}
+          <button class="update-audio-submit" type="submit">Remix</button>
         </div>
-        {% endfor %}
-      </div>
-      {% endfor %}
-      <button class="update-audio-submit" type="submit">Update</button>
-    </form>
-  </div>
+        <div class="bpm-label">Tempo</div>
+        <input class='bpm' type="number" id='bpm' name="bpm" value="{{bpm}}">
+        <div class="tracks-container">
+          <div class="track-guide">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+          {% for track in tracks %}
+          <div class="instrument">{{track.name}}</div>
+          <div class="track">
+            {% for beat in loop_array %}
+            <div class="beat">
+              <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
+                value="{{ beat }}" {% if beat in track.beats %}checked{% endif %}>
+              <label for="track-{{track.track_id}}-beat-{{ beat }}"></label>
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+      </form>
+    </div>
   </main>
   <script>
     // Disable navigate away confirmation
