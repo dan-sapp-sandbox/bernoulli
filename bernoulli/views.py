@@ -21,30 +21,48 @@ def landing(request):
     defaultHiHatBeats = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
     defaultSnareBeats = [2, 6, 7, 10, 14, 18, 24, 25, 28]
     defaultSizzleBeats = [6, 14, 22, 30]
-    defaultBassGuitarBeats1 = [12, 16]
-    defaultBassGuitarBeats2 = [10, 18]
-    defaultBassGuitarBeats3 = [8, 20]
-    defaultBassGuitarBeats4 = [6, 22]
-    defaultBassGuitarBeats5 = [4, 24]
-    defaultBassGuitarBeats6 = [2, 26]
-    defaultBassGuitarBeats7 = [0, 28]
+    defaultBassGuitarBeats0 = [14, 16]
+    defaultBassGuitarBeats1 = [12, 18]
+    defaultBassGuitarBeats2 = []
+    defaultBassGuitarBeats3 = [10, 20]
+    defaultBassGuitarBeats4 = []
+    defaultBassGuitarBeats5 = [8, 22]
+    defaultBassGuitarBeats6 = []
+    defaultBassGuitarBeats7 = [6, 24]
+    defaultBassGuitarBeats8 = [4, 26]
+    defaultBassGuitarBeats9 = []
+    defaultBassGuitarBeats10 = [2, 28]
+    defaultBassGuitarBeats11 = []
+    defaultBassGuitarBeats12 = [0, 30]
     bass_guitar_config = [
+        defaultBassGuitarBeats0,
         defaultBassGuitarBeats1,
         defaultBassGuitarBeats2,
         defaultBassGuitarBeats3,
         defaultBassGuitarBeats4,
         defaultBassGuitarBeats5,
         defaultBassGuitarBeats6,
-        defaultBassGuitarBeats7
+        defaultBassGuitarBeats7,
+        defaultBassGuitarBeats8,
+        defaultBassGuitarBeats9,
+        defaultBassGuitarBeats10,
+        defaultBassGuitarBeats11,
+        defaultBassGuitarBeats12,
     ]
     keyboard_config = [
+        defaultBassGuitarBeats0,
         defaultBassGuitarBeats1,
         defaultBassGuitarBeats2,
         defaultBassGuitarBeats3,
         defaultBassGuitarBeats4,
         defaultBassGuitarBeats5,
         defaultBassGuitarBeats6,
-        defaultBassGuitarBeats7
+        defaultBassGuitarBeats7,
+        defaultBassGuitarBeats8,
+        defaultBassGuitarBeats9,
+        defaultBassGuitarBeats10,
+        defaultBassGuitarBeats11,
+        defaultBassGuitarBeats12,
     ]
     base_config = defaultBaseBeats
     hihat_config = defaultHiHatBeats
@@ -96,7 +114,7 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     silence_bit = AudioSegment.silent(duration=ms_per_beat)
     silence_bit.export(silent_sample, format="wav")
     
-    for i in range(6, -1, -1):
+    for i in range(13, 0, -1):
         change_pitch(
             "media/audio/keys/korg-esx-fx-bass-2.wav", 
             f"media/audio/bass_guitar{i}.wav", 
@@ -109,10 +127,10 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         )
 
     bass_guitar_tone_samples = [
-        f"media/audio/bass_guitar{i}.wav" for i in range(6, -1, -1)
+        f"media/audio/bass_guitar{i}.wav" for i in range(13, -1, -1)
     ]
     keyboard_tone_samples = [
-        f"media/audio/keyboard{i}.wav" for i in range(6, -1, -1)
+        f"media/audio/keyboard{i}.wav" for i in range(13, -1, -1)
     ]
     
     bass_drums = process_track("bass", bass_config[0], "media/audio/drums/kick-big.wav", ms_per_beat)
@@ -127,6 +145,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         process_track("bass-guitar-4", bass_guitar_config[4], bass_guitar_tone_samples[4], ms_per_beat),
         process_track("bass-guitar-5", bass_guitar_config[5], bass_guitar_tone_samples[5], ms_per_beat),
         process_track("bass-guitar-6", bass_guitar_config[6], bass_guitar_tone_samples[6], ms_per_beat),
+        process_track("bass-guitar-7", bass_guitar_config[7], bass_guitar_tone_samples[7], ms_per_beat),
+        process_track("bass-guitar-8", bass_guitar_config[8], bass_guitar_tone_samples[8], ms_per_beat),
+        process_track("bass-guitar-9", bass_guitar_config[9], bass_guitar_tone_samples[9], ms_per_beat),
+        process_track("bass-guitar-10", bass_guitar_config[10], bass_guitar_tone_samples[10], ms_per_beat),
+        process_track("bass-guitar-11", bass_guitar_config[11], bass_guitar_tone_samples[11], ms_per_beat),
+        process_track("bass-guitar-12", bass_guitar_config[12], bass_guitar_tone_samples[12], ms_per_beat),
     ]
     keyboard = [
         process_track("keyboard-0", keyboard_config[0], keyboard_tone_samples[0], ms_per_beat),
@@ -136,6 +160,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         process_track("keyboard-4", keyboard_config[4], keyboard_tone_samples[4], ms_per_beat),
         process_track("keyboard-5", keyboard_config[5], keyboard_tone_samples[5], ms_per_beat),
         process_track("keyboard-6", keyboard_config[6], keyboard_tone_samples[6], ms_per_beat),
+        process_track("keyboard-7", keyboard_config[7], keyboard_tone_samples[7], ms_per_beat),
+        process_track("keyboard-8", keyboard_config[8], keyboard_tone_samples[8], ms_per_beat),
+        process_track("keyboard-9", keyboard_config[9], keyboard_tone_samples[9], ms_per_beat),
+        process_track("keyboard-10", keyboard_config[10], keyboard_tone_samples[10], ms_per_beat),
+        process_track("keyboard-11", keyboard_config[11], keyboard_tone_samples[11], ms_per_beat),
+        process_track("keyboard-12", keyboard_config[12], keyboard_tone_samples[12], ms_per_beat),
     ]
 
     concated_bass_drums = concatenate(bass_drums)
@@ -150,6 +180,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         concatenate(bass_guitar[4]),
         concatenate(bass_guitar[5]),
         concatenate(bass_guitar[6]),
+        concatenate(bass_guitar[7]),
+        concatenate(bass_guitar[8]),
+        concatenate(bass_guitar[9]),
+        concatenate(bass_guitar[10]),
+        concatenate(bass_guitar[11]),
+        concatenate(bass_guitar[12]),
     ]
     concated_keyboard = [
         concatenate(keyboard[0]),
@@ -159,6 +195,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         concatenate(keyboard[4]),
         concatenate(keyboard[5]),
         concatenate(keyboard[6]),
+        concatenate(keyboard[7]),
+        concatenate(keyboard[8]),
+        concatenate(keyboard[9]),
+        concatenate(keyboard[10]),
+        concatenate(keyboard[11]),
+        concatenate(keyboard[12]),
     ]
 
     concated_bass_drums_file = "media/audio/final_base.wav"
@@ -176,6 +218,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     concated_bass_guitars[4].export("media/audio/final_bass_guitars-4.wav", format="wav")
     concated_bass_guitars[5].export("media/audio/final_bass_guitars-5.wav", format="wav")
     concated_bass_guitars[6].export("media/audio/final_bass_guitars-6.wav", format="wav")
+    concated_bass_guitars[7].export("media/audio/final_bass_guitars-7.wav", format="wav")
+    concated_bass_guitars[8].export("media/audio/final_bass_guitars-8.wav", format="wav")
+    concated_bass_guitars[9].export("media/audio/final_bass_guitars-9.wav", format="wav")
+    concated_bass_guitars[10].export("media/audio/final_bass_guitars-10.wav", format="wav")
+    concated_bass_guitars[11].export("media/audio/final_bass_guitars-11.wav", format="wav")
+    concated_bass_guitars[12].export("media/audio/final_bass_guitars-12.wav", format="wav")
     
     concated_keyboard[0].export("media/audio/final_keyboard-0.wav", format="wav")
     concated_keyboard[1].export("media/audio/final_keyboard-1.wav", format="wav")
@@ -184,6 +232,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     concated_keyboard[4].export("media/audio/final_keyboard-4.wav", format="wav")
     concated_keyboard[5].export("media/audio/final_keyboard-5.wav", format="wav")
     concated_keyboard[6].export("media/audio/final_keyboard-6.wav", format="wav")
+    concated_keyboard[7].export("media/audio/final_keyboard-7.wav", format="wav")
+    concated_keyboard[8].export("media/audio/final_keyboard-8.wav", format="wav")
+    concated_keyboard[9].export("media/audio/final_keyboard-9.wav", format="wav")
+    concated_keyboard[10].export("media/audio/final_keyboard-10.wav", format="wav")
+    concated_keyboard[11].export("media/audio/final_keyboard-11.wav", format="wav")
+    concated_keyboard[12].export("media/audio/final_keyboard-12.wav", format="wav")
     
     # plot_waveform(output_file)
     
@@ -200,6 +254,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         "media/audio/final_bass_guitars-4.wav",
         "media/audio/final_bass_guitars-5.wav",
         "media/audio/final_bass_guitars-6.wav",
+        "media/audio/final_bass_guitars-7.wav",
+        "media/audio/final_bass_guitars-8.wav",
+        "media/audio/final_bass_guitars-9.wav",
+        "media/audio/final_bass_guitars-10.wav",
+        "media/audio/final_bass_guitars-11.wav",
+        "media/audio/final_bass_guitars-12.wav",
         "media/audio/final_keyboard-0.wav",
         "media/audio/final_keyboard-1.wav",
         "media/audio/final_keyboard-2.wav",
@@ -207,6 +267,12 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         "media/audio/final_keyboard-4.wav",
         "media/audio/final_keyboard-5.wav",
         "media/audio/final_keyboard-6.wav",
+        "media/audio/final_keyboard-7.wav",
+        "media/audio/final_keyboard-8.wav",
+        "media/audio/final_keyboard-9.wav",
+        "media/audio/final_keyboard-10.wav",
+        "media/audio/final_keyboard-11.wav",
+        "media/audio/final_keyboard-12.wav",
     ], combined_file, ((ms_per_beat - 8) * beats_per_measure))
     
     final_output = "media/audio/final_output.wav"
@@ -322,6 +388,12 @@ def update_audio(request):
         list(map(int,request.POST.getlist('track-4-5'))),
         list(map(int,request.POST.getlist('track-5-5'))),
         list(map(int,request.POST.getlist('track-6-5'))),
+        list(map(int,request.POST.getlist('track-7-5'))),
+        list(map(int,request.POST.getlist('track-8-5'))),
+        list(map(int,request.POST.getlist('track-9-5'))),
+        list(map(int,request.POST.getlist('track-10-5'))),
+        list(map(int,request.POST.getlist('track-11-5'))),
+        list(map(int,request.POST.getlist('track-12-5'))),
     ]
     keyboard_config = [
         list(map(int,request.POST.getlist('track-0-6'))),
@@ -331,6 +403,12 @@ def update_audio(request):
         list(map(int,request.POST.getlist('track-4-6'))),
         list(map(int,request.POST.getlist('track-5-6'))),
         list(map(int,request.POST.getlist('track-6-6'))),
+        list(map(int,request.POST.getlist('track-7-6'))),
+        list(map(int,request.POST.getlist('track-8-6'))),
+        list(map(int,request.POST.getlist('track-9-6'))),
+        list(map(int,request.POST.getlist('track-10-6'))),
+        list(map(int,request.POST.getlist('track-11-6'))),
+        list(map(int,request.POST.getlist('track-12-6'))),
     ]
     
     bpm = int(bpm)
