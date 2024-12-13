@@ -20,7 +20,7 @@ main {
   border-radius: 1rem;
   padding: .5rem;
   display: flex;
-  width: 380px;
+  width: 95%;
   justify-content: space-between;
 }
 
