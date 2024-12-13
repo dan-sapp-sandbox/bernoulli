@@ -42,15 +42,17 @@
           </div>
           {% for track in tracks %}
           <div class="instrument">{{track.name}}</div>
+          {% for tone in track.beats %}
           <div class="track">
             {% for beat in loop_array %}
             <div class="beat">
               <input type="checkbox" id="track-{{track.track_id}}-beat-{{ beat }}" name="track-{{track.track_id}}"
-                value="{{ beat }}" {% if beat in track.beats %}checked{% endif %}>
+                value="{{ beat }}" {% if beat in tone %}checked{% endif %}>
               <label for="track-{{track.track_id}}-beat-{{ beat }}"></label>
             </div>
             {% endfor %}
           </div>
+          {% endfor %}
           {% endfor %}
         </div>
       </form>
