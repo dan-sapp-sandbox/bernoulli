@@ -21,48 +21,35 @@ def landing(request):
     defaultHiHatBeats = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
     defaultSnareBeats = [2, 6, 7, 10, 14, 18, 24, 25, 28]
     defaultSizzleBeats = [6, 14, 22, 30]
-    defaultBassGuitarBeats0 = [14, 16]
-    defaultBassGuitarBeats1 = [12, 18]
-    defaultBassGuitarBeats2 = []
-    defaultBassGuitarBeats3 = [10, 20]
-    defaultBassGuitarBeats4 = []
-    defaultBassGuitarBeats5 = [8, 22]
-    defaultBassGuitarBeats6 = []
-    defaultBassGuitarBeats7 = [6, 24]
-    defaultBassGuitarBeats8 = [4, 26]
-    defaultBassGuitarBeats9 = []
-    defaultBassGuitarBeats10 = [2, 28]
-    defaultBassGuitarBeats11 = []
-    defaultBassGuitarBeats12 = [0, 30]
     bass_guitar_config = [
-        defaultBassGuitarBeats0,
-        defaultBassGuitarBeats1,
-        defaultBassGuitarBeats2,
-        defaultBassGuitarBeats3,
-        defaultBassGuitarBeats4,
-        defaultBassGuitarBeats5,
-        defaultBassGuitarBeats6,
-        defaultBassGuitarBeats7,
-        defaultBassGuitarBeats8,
-        defaultBassGuitarBeats9,
-        defaultBassGuitarBeats10,
-        defaultBassGuitarBeats11,
-        defaultBassGuitarBeats12,
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
     ]
     keyboard_config = [
-        defaultBassGuitarBeats0,
-        defaultBassGuitarBeats1,
-        defaultBassGuitarBeats2,
-        defaultBassGuitarBeats3,
-        defaultBassGuitarBeats4,
-        defaultBassGuitarBeats5,
-        defaultBassGuitarBeats6,
-        defaultBassGuitarBeats7,
-        defaultBassGuitarBeats8,
-        defaultBassGuitarBeats9,
-        defaultBassGuitarBeats10,
-        defaultBassGuitarBeats11,
-        defaultBassGuitarBeats12,
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
     ]
     base_config = defaultBaseBeats
     hihat_config = defaultHiHatBeats
@@ -117,20 +104,20 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     for i in range(13, 0, -1):
         change_pitch(
             "media/audio/keys/korg-esx-fx-bass-2.wav", 
-            f"media/audio/bass_guitar{i}.wav", 
+            f"media/audio/bass_guitar/pitch{i}.wav", 
             i
         )
         change_pitch(
             "media/audio/keys/krushfunk-synth-key-loud-2.wav", 
-            f"media/audio/keyboard{i}.wav", 
+            f"media/audio/keys/pitch{i}.wav", 
             i
         )
 
     bass_guitar_tone_samples = [
-        f"media/audio/bass_guitar{i}.wav" for i in range(13, -1, -1)
+        f"media/audio/bass_guitar/pitch{i}.wav" for i in range(13, -1, -1)
     ]
     keyboard_tone_samples = [
-        f"media/audio/keyboard{i}.wav" for i in range(13, -1, -1)
+        f"media/audio/keys/pitch{i}.wav" for i in range(13, -1, -1)
     ]
     
     bass_drums = process_track("bass", bass_config[0], "media/audio/drums/kick-big.wav", ms_per_beat)
@@ -211,33 +198,33 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
     concated_snares.export(concated_snares_file, format="wav")
     concated_sizzles_file = "media/audio/final_sizzles.wav"
     concated_sizzles.export(concated_sizzles_file, format="wav")
-    concated_bass_guitars[0].export("media/audio/final_bass_guitars-0.wav", format="wav")
-    concated_bass_guitars[1].export("media/audio/final_bass_guitars-1.wav", format="wav")
-    concated_bass_guitars[2].export("media/audio/final_bass_guitars-2.wav", format="wav")
-    concated_bass_guitars[3].export("media/audio/final_bass_guitars-3.wav", format="wav")
-    concated_bass_guitars[4].export("media/audio/final_bass_guitars-4.wav", format="wav")
-    concated_bass_guitars[5].export("media/audio/final_bass_guitars-5.wav", format="wav")
-    concated_bass_guitars[6].export("media/audio/final_bass_guitars-6.wav", format="wav")
-    concated_bass_guitars[7].export("media/audio/final_bass_guitars-7.wav", format="wav")
-    concated_bass_guitars[8].export("media/audio/final_bass_guitars-8.wav", format="wav")
-    concated_bass_guitars[9].export("media/audio/final_bass_guitars-9.wav", format="wav")
-    concated_bass_guitars[10].export("media/audio/final_bass_guitars-10.wav", format="wav")
-    concated_bass_guitars[11].export("media/audio/final_bass_guitars-11.wav", format="wav")
-    concated_bass_guitars[12].export("media/audio/final_bass_guitars-12.wav", format="wav")
+    concated_bass_guitars[0].export("media/audio/bass_guitar/final-0.wav", format="wav")
+    concated_bass_guitars[1].export("media/audio/bass_guitar/final-1.wav", format="wav")
+    concated_bass_guitars[2].export("media/audio/bass_guitar/final-2.wav", format="wav")
+    concated_bass_guitars[3].export("media/audio/bass_guitar/final-3.wav", format="wav")
+    concated_bass_guitars[4].export("media/audio/bass_guitar/final-4.wav", format="wav")
+    concated_bass_guitars[5].export("media/audio/bass_guitar/final-5.wav", format="wav")
+    concated_bass_guitars[6].export("media/audio/bass_guitar/final-6.wav", format="wav")
+    concated_bass_guitars[7].export("media/audio/bass_guitar/final-7.wav", format="wav")
+    concated_bass_guitars[8].export("media/audio/bass_guitar/final-8.wav", format="wav")
+    concated_bass_guitars[9].export("media/audio/bass_guitar/final-9.wav", format="wav")
+    concated_bass_guitars[10].export("media/audio/bass_guitar/final-10.wav", format="wav")
+    concated_bass_guitars[11].export("media/audio/bass_guitar/final-11.wav", format="wav")
+    concated_bass_guitars[12].export("media/audio/bass_guitar/final-12.wav", format="wav")
     
-    concated_keyboard[0].export("media/audio/final_keyboard-0.wav", format="wav")
-    concated_keyboard[1].export("media/audio/final_keyboard-1.wav", format="wav")
-    concated_keyboard[2].export("media/audio/final_keyboard-2.wav", format="wav")
-    concated_keyboard[3].export("media/audio/final_keyboard-3.wav", format="wav")
-    concated_keyboard[4].export("media/audio/final_keyboard-4.wav", format="wav")
-    concated_keyboard[5].export("media/audio/final_keyboard-5.wav", format="wav")
-    concated_keyboard[6].export("media/audio/final_keyboard-6.wav", format="wav")
-    concated_keyboard[7].export("media/audio/final_keyboard-7.wav", format="wav")
-    concated_keyboard[8].export("media/audio/final_keyboard-8.wav", format="wav")
-    concated_keyboard[9].export("media/audio/final_keyboard-9.wav", format="wav")
-    concated_keyboard[10].export("media/audio/final_keyboard-10.wav", format="wav")
-    concated_keyboard[11].export("media/audio/final_keyboard-11.wav", format="wav")
-    concated_keyboard[12].export("media/audio/final_keyboard-12.wav", format="wav")
+    concated_keyboard[0].export("media/audio/keys/final-0.wav", format="wav")
+    concated_keyboard[1].export("media/audio/keys/final-1.wav", format="wav")
+    concated_keyboard[2].export("media/audio/keys/final-2.wav", format="wav")
+    concated_keyboard[3].export("media/audio/keys/final-3.wav", format="wav")
+    concated_keyboard[4].export("media/audio/keys/final-4.wav", format="wav")
+    concated_keyboard[5].export("media/audio/keys/final-5.wav", format="wav")
+    concated_keyboard[6].export("media/audio/keys/final-6.wav", format="wav")
+    concated_keyboard[7].export("media/audio/keys/final-7.wav", format="wav")
+    concated_keyboard[8].export("media/audio/keys/final-8.wav", format="wav")
+    concated_keyboard[9].export("media/audio/keys/final-9.wav", format="wav")
+    concated_keyboard[10].export("media/audio/keys/final-10.wav", format="wav")
+    concated_keyboard[11].export("media/audio/keys/final-11.wav", format="wav")
+    concated_keyboard[12].export("media/audio/keys/final-12.wav", format="wav")
     
     # plot_waveform(output_file)
     
@@ -247,32 +234,32 @@ def generateAudioTrack(bpm, bass_config, hihat_config, snare_config, sizzle_conf
         concated_hihats_file,
         concated_snares_file,
         concated_sizzles_file,
-        "media/audio/final_bass_guitars-0.wav",
-        "media/audio/final_bass_guitars-1.wav",
-        "media/audio/final_bass_guitars-2.wav",
-        "media/audio/final_bass_guitars-3.wav",
-        "media/audio/final_bass_guitars-4.wav",
-        "media/audio/final_bass_guitars-5.wav",
-        "media/audio/final_bass_guitars-6.wav",
-        "media/audio/final_bass_guitars-7.wav",
-        "media/audio/final_bass_guitars-8.wav",
-        "media/audio/final_bass_guitars-9.wav",
-        "media/audio/final_bass_guitars-10.wav",
-        "media/audio/final_bass_guitars-11.wav",
-        "media/audio/final_bass_guitars-12.wav",
-        "media/audio/final_keyboard-0.wav",
-        "media/audio/final_keyboard-1.wav",
-        "media/audio/final_keyboard-2.wav",
-        "media/audio/final_keyboard-3.wav",
-        "media/audio/final_keyboard-4.wav",
-        "media/audio/final_keyboard-5.wav",
-        "media/audio/final_keyboard-6.wav",
-        "media/audio/final_keyboard-7.wav",
-        "media/audio/final_keyboard-8.wav",
-        "media/audio/final_keyboard-9.wav",
-        "media/audio/final_keyboard-10.wav",
-        "media/audio/final_keyboard-11.wav",
-        "media/audio/final_keyboard-12.wav",
+        "media/audio/bass_guitar/final-0.wav",
+        "media/audio/bass_guitar/final-1.wav",
+        "media/audio/bass_guitar/final-2.wav",
+        "media/audio/bass_guitar/final-3.wav",
+        "media/audio/bass_guitar/final-4.wav",
+        "media/audio/bass_guitar/final-5.wav",
+        "media/audio/bass_guitar/final-6.wav",
+        "media/audio/bass_guitar/final-7.wav",
+        "media/audio/bass_guitar/final-8.wav",
+        "media/audio/bass_guitar/final-9.wav",
+        "media/audio/bass_guitar/final-10.wav",
+        "media/audio/bass_guitar/final-11.wav",
+        "media/audio/bass_guitar/final-12.wav",
+        "media/audio/keys/final-0.wav",
+        "media/audio/keys/final-1.wav",
+        "media/audio/keys/final-2.wav",
+        "media/audio/keys/final-3.wav",
+        "media/audio/keys/final-4.wav",
+        "media/audio/keys/final-5.wav",
+        "media/audio/keys/final-6.wav",
+        "media/audio/keys/final-7.wav",
+        "media/audio/keys/final-8.wav",
+        "media/audio/keys/final-9.wav",
+        "media/audio/keys/final-10.wav",
+        "media/audio/keys/final-11.wav",
+        "media/audio/keys/final-12.wav",
     ], combined_file, ((ms_per_beat - 8) * beats_per_measure))
     
     final_output = "media/audio/final_output.wav"
