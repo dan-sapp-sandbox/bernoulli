@@ -1,8 +1,6 @@
 body {
   background: rgb(218, 142, 142);
   min-width: 360px;
-  display: flex;
-  justify-content: center;
 }
 
 main {
@@ -80,7 +78,6 @@ input[type="checkbox"]:checked+label+.show-hide{
   border: 1px solid purple;
   border-radius: .5rem;
   width: calc(100vw - 30px);
-  max-width: 1080px;
   overflow-x: scroll;
 }
 
