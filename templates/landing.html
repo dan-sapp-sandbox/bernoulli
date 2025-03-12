@@ -40,17 +40,19 @@
             <div class="bar"></div>
             <div class="bar"></div>
           </div>
-          {% for tone in track.beats %}
-          <div class="track">
-            {% for beat in loop_array %}
-            <div class="beat">
-              <input type="checkbox" id="track-{{track.track_id}}-{{forloop.parentloop.counter0}}-beat-{{ beat }}"
-                name="track-{{forloop.parentloop.counter0}}-{{track.track_id}}" value="{{ beat }}" {% if beat in tone
-                %}checked{% endif %}>
-              <label for="track-{{track.track_id}}-{{forloop.parentloop.counter0}}-beat-{{ beat }}"></label>
+          {% for track in tracks %}
+            {% for tone in track.beats %}
+            <div class="track">
+              {% for beat in loop_array %}
+              <div class="beat">
+                <input type="checkbox" id="track-{{track.track_id}}-{{forloop.parentloop.counter0}}-beat-{{ beat }}"
+                  name="track-{{forloop.parentloop.counter0}}-{{track.track_id}}" value="{{ beat }}" {% if beat in tone
+                  %}checked{% endif %}>
+                <label for="track-{{track.track_id}}-{{forloop.parentloop.counter0}}-beat-{{ beat }}"></label>
+              </div>
+              {% endfor %}
             </div>
             {% endfor %}
-          </div>
           {% endfor %}
         </div>
       </form>
