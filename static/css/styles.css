@@ -5,6 +5,7 @@ body {
 
 main {
   width: 100%;
+  max-width: 1080px;
 }
 
 .container {
@@ -53,6 +54,14 @@ audio {
   padding: .5rem;
   border-radius: 1rem;
   margin-bottom: 10px;
+}
+
+.show-hide {
+  background: blue;
+}
+input[type="checkbox"]:checked+label+.show-hide{
+  transform: scale(1.05);
+  background: green;
 }
 
 .form-container {
